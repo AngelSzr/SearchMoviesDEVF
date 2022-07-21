@@ -3,7 +3,7 @@ import CardMovie from "./CardMovie"
 const Movies = ({ data, error }) => {
     console.log(data);
     return (
-        error ? "No se encontraron resultados" : (<ul className="row">
+        error ? <p className="text-center">No se encontraron resultados</p> : (<ul className="row">
             {data.map(item => (
                 <li className="col-12 col-md-2 col-lg-3">
                     <CardMovie  {...item} />

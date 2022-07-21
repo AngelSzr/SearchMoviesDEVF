@@ -1,44 +1,30 @@
-import axios from 'axios'
-import { useEffect, useState, useRef } from 'react'
-import Loading from './Loading'
-import Movies from './Movies'
-const apiKey = 'ea92314d'
+
+import { useState } from 'react'
+import { useRef } from 'react'
+//hooks
+import useFetcher from '../hooks/useFetcher'
+import { getMovies, getMovie } from '../utils/getMovies'
 
 //Components
 
+import Loading from './Loading'
+import Movies from './Movies'
 
 function App() {
-  const [movies, setMovies] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
-
-  const getMovies = (query = 'batman') => {
-    return axios.get(`http://www.omdbapi.com/?apikey=${apiKey}&s=${query}`).then(response => response).catch()
-  }
-  //el mismo de .then se podría con un async/await
-
-  const getData = async () => {
-
-  }
-
-  useEffect(() => {
-    getData()
-  }, [])
 
 
+  const [query, setQuery] = useState('fox')
+  const { dataState: movies, loading, error } = useFetcher(query)
+  //No se te olvide utilizar como si fuera una función, por que lo es.
   const searchRef = useRef(null) //Esto es un hook, que me permite hacer referencia al valor de html, en este caso me hace referencia a mi input para buscarla película, por lo que con handleSubmit puedo obtener lo que escribo en el input
+
   const handleSubmit = async (e) => {
     e.preventDefault()
-    const { data } = await getMovies(searchRef.current.value)
-    if (data.Error) {
-      setError(data.Error)
-      setMovies([])
-    } else {
-      setMovies(data.Search)
-    }
-    setLoading(false)
-    //También es posible hacerlo con algo el valor de e.target."podríamos poner un name en el input".value
+    setQuery(searchRef.current.value)
+    e.target.reset();
   }
+
+
   return (
     <div className="container">
       <h4 className="py-4 text-center">Buscador</h4>
@@ -51,7 +37,7 @@ function App() {
         </div>
       </form>
       <div className="py-4">
-        {loading ? <Loading /> : <Movies error={error} data={movies} />}
+        {loading ? <Loading /> : <Movies data={movies} />}
       </div>
       {/*El estado de Loading cambia en el handleSubmit */}
     </div>
